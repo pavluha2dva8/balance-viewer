@@ -1,26 +1,29 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { FC, useState } from 'react'
+import { useAppDispatch, useAppSelector } from './hooks'
+import { getBalanceByPkh } from './store/accountsSlice'
+import './App.css'
+import List from './components/List'
+import InputField from './components/InputField'
 
-function App() {
+export const App: FC = () => {
+  const [pkh, setPkh] = useState('')
+  const { loading, error } = useAppSelector((state) => state.accounts)
+  const dispatch = useAppDispatch()
+
+  const handleAction = () => {
+    if (pkh.trim().length) {
+      dispatch(getBalanceByPkh(pkh))
+      setPkh('')
+    }
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      <div className="content">
+        <InputField value={pkh} updateText={setPkh} handleAction={handleAction} />
+        <h3>{error}</h3>
+        {loading ? 'Loading..' : <List />}
+      </div>
     </div>
-  );
+  )
 }
-
-export default App;
